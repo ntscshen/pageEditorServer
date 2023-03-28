@@ -44,8 +44,6 @@ const sendSmsCode = async phone => {
 
   // 4. 最终的返回结果( 本地开发环境返回验证码 线上环境返回 null )
   const finalSmsCode = isProd ? null : { code: smsCode };
-  console.log('{ code: smsCode } :>> ', { code: smsCode });
-  console.log('new SuccessModel(finalSmsCode) :>> ', new SuccessModel(finalSmsCode));
   return new SuccessModel(finalSmsCode);
 };
 

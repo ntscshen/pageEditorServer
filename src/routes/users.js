@@ -1,6 +1,10 @@
 const sendSmsCode = require('../controller/users/sendSmsCode');
+const loginByPhoneNumber = require('../controller/users/loginByPhoneNumber');
 const generateValidator = require('../middlewares/genValidator');
-const { phoneNumberSchema } = require('../validator/users');
+const { phoneNumberSchema, phoneNumberAndSmsCodeSchema, getUserInfoSchema } = require('../validator/users');
+const { loginCheck } = require('../middlewares/loginCheck');
+const { SuccessModel } = require('../resModel');
+const { updateUserInfoController } = require('../controller/users/updateUserInfo');
 
 const router = require('koa-router')();
 
@@ -21,6 +25,7 @@ router.prefix('/api/users');
  * 3. 调用相关的方法( 直接把数据扔给 controller 处理 )
  * */
 
+// 生成短信验证码
 router.post('/generateSmsCode', generateValidator(phoneNumberSchema), async (ctx, next) => {
   // 1. 验证手机号是否正确 generateValidator(phoneNumberSchema)
   const { phoneNumber } = ctx.request.body;
@@ -29,15 +34,25 @@ router.post('/generateSmsCode', generateValidator(phoneNumberSchema), async (ctx
   ctx.body = res;
 });
 
-
 // 使用手机号登录
-router.post('/loginByPhone', async (ctx, next) => {});
+router.post('/login', generateValidator(phoneNumberAndSmsCodeSchema), async (ctx, next) => {
+  const { phoneNumber, smsCode } = ctx.request.body;
+  console.log('phoneNumber :>> ', phoneNumber);
+  console.log('smsCode :>> ', smsCode);
+  const res = await loginByPhoneNumber(phoneNumber, smsCode);
+  ctx.boxy = res;
+});
 
 // 获取用户信息
-router.get('/getUserInfo', async (ctx, next) => {});
+router.get('/getUserInfo', loginCheck, async (ctx, next) => {
+  ctx.body = new SuccessModel(ctx.userInfo);
+});
 
 // 修改用户信息
-router.patch('/updateUserInfo', async (ctx, next) => {});
+router.patch('/updateUserInfo', loginCheck, generateValidator(getUserInfoSchema), async (ctx, next) => {
+  const res = await updateUserInfoController(ctx.userInfo, ctx.request.body);
+  ctx.body = res;
+});
 
 router.get('/', function(ctx, next) {
   ctx.body = 'this is a users response!11';
