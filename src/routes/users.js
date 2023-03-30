@@ -37,10 +37,8 @@ router.post('/generateSmsCode', generateValidator(phoneNumberSchema), async (ctx
 // 使用手机号登录
 router.post('/login', generateValidator(phoneNumberAndSmsCodeSchema), async (ctx, next) => {
   const { phoneNumber, smsCode } = ctx.request.body;
-  console.log('phoneNumber :>> ', phoneNumber);
-  console.log('smsCode :>> ', smsCode);
   const res = await loginByPhoneNumber(phoneNumber, smsCode);
-  ctx.boxy = res;
+  ctx.body = res;
 });
 
 // 获取用户信息
