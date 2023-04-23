@@ -7,6 +7,11 @@ module.exports = {
     password: 'aB123456',
     database: 'users_db',
   },
+  //mongodb 配置
+  mongodbConfig: {
+    url: 'mongodb://localhost:27017',
+    dbName: 'myblog',
+  },
   // redis 配置
   redisConfig: {
     host: '127.0.0.1',

@@ -5,11 +5,65 @@ const { phoneNumberSchema, phoneNumberAndSmsCodeSchema, getUserInfoSchema } = re
 const { loginCheck } = require('../middlewares/loginCheck');
 const { SuccessModel } = require('../resModel');
 const { updateUserInfoController } = require('../controller/users/updateUserInfo');
+const connection = require('../db/mysql2');
+const redisClient = require('../db/redis');
+const mongoose = require('../db/mongoose');
+const dayjs = require('dayjs');
 
 const router = require('koa-router')();
 
 // 路由前缀
 router.prefix('/api/users');
+
+// 测试 mysql 连接
+
+router.get('/db-check', async (ctx, next) => {
+  // 测试 mysql 连接
+  const mysqlExecult = await connection.execute('SELECT NOW();');
+  const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
+  const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
+
+  // 测试 redis 连接
+  redisClient.set('now', 'redis测试成功');
+  const redisExecultNow = await redisClient.get('now');
+
+  // 测试 mongodb 连接
+  let mongodbResult = null;
+  try {
+    mongodbResult = true;
+    const userSchema = new mongoose.Schema({
+      name: String,
+      age: Number,
+      email: String,
+      password: String,
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    });
+
+    const User = mongoose.model('User', userSchema);
+
+    await User.findOne().then(result => {
+      console.log('result :>> ', result);
+    });
+  } catch (error) {
+    console.log('error :>> ', error);
+    mongodbResult = false;
+  }
+
+  ctx.body = {
+    errno: 0,
+    data: {
+      mysqlConnection: {
+        mysqlExecultNow,
+        currentDate,
+      },
+      redisConnection: redisExecultNow,
+      mongodbConnection: mongodbResult,
+    },
+  };
+});
 
 // 为什么要添加中间件？
 // 如果前端按照正确的格式传递了参数，没有任何问题，如果没有按照正确的格式传递参数，就会报错

@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { mysqlConfig } = require('./dev');
+const { mysqlConfig } = require('../../config/dev');
 const { host, port, user, password, database } = mysqlConfig;
 
 const sequelize = new Sequelize(database, user, password, {
@@ -21,7 +21,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
-    console.log('连接已成功建立.');
+    console.log('连接已成功建立.111');
     // Connection has been established successfully 翻译
     // 连接已成功建立
   })
