@@ -4,12 +4,12 @@ const { SEND_SMS_CODE_FREQUENCY } = require('../../resModel/failInfo/users');
 const { isDev, isProd, isTest } = require('../../utils/env');
 const { createSmsCode } = require('../../utils/utils');
 const { sendSmsCodeMsg } = require('../../vendor/sendMsg');
+const { getSmsCodeFromCache } = require('../../cache/smsCode');
 
 // 发送短信验证码
 const sendSmsCode = async phoneNumber => {
   // 1. 从缓存中获取验证码 查看是否过期
-  // const smsCodeFromCache = (await getSmsCodeFromCache(phoneNumber)) || '';
-  const smsCodeFromCache = '';
+  const smsCodeFromCache = (await getSmsCodeFromCache(phoneNumber)) || '';
   if (smsCodeFromCache) {
     // 如果是: 本地开发环境 直接返回
     if (isDev) {

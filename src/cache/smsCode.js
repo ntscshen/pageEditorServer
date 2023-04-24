@@ -19,7 +19,9 @@ const getSmsCodeFromCache = async phoneNumber => {
 const setSmsCodeToCache = async (phoneNumber, code) => {
   const key = `${PREFIX}${phoneNumber}`;
   console.log('setSmsCodeToCache :>> ', key);
-  await redisClient.set(key, code);
+  // 设置过期时间为 1 小时
+  await redisClient.set(key, code, 'EX', 60 * 60);
+
 };
 
 module.exports = {

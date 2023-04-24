@@ -1,5 +1,5 @@
 const { getSmsCodeFromCache } = require('../../cache/smsCode');
-const { ErrorModel } = require('../../resModel');
+const { ErrorModel, SuccessModel } = require('../../resModel');
 const { SMS_CODE_ERROR, USER_IS_DISABLED, CREATE_USER_FAIL } = require('../../resModel/failInfo/users');
 const { getUserInfoByPhoneNumber, updateUserInfo, createUserByPhoneNumber } = require('../../service/users');
 const randomName = require('random-name');
@@ -17,6 +17,7 @@ const loginByPhoneNumber = async (phoneNumber, smsCode) => {
 
   // 如果用户的验证码 === 缓存中的验证码
   // 我们查找当前用户是否存在 ( 通过手机号查找用户 )，如果用户存在，直接返回用户信息，如果用户不存在，创建用户，然后返回用户信息
+
   // 2. 查找用户是否存在 ( 通过手机号查找用户 )
   const user = await getUserInfoByPhoneNumber(phoneNumber);
   if (user) {
@@ -35,17 +36,23 @@ const loginByPhoneNumber = async (phoneNumber, smsCode) => {
   }
 
   // 3. 查找不到用户，创建用户
-  const password = doCrypto(phoneNumber.slice(-6)); // 手机号注册用户，默认用户名为手机号，密码为手机号后6位 ( 12345678901 => 123456 ) , 再次进行加密处理
+  const password = doCrypto(phoneNumber.slice(-6)); // 手机号注册用户，默认用户名为手机号，密码为手机号后6位 ( 12345678901 => 123456 ) , 再次进行加密处理( 为什么要进行加密？ 如果数据库被攻破，用户的密码也会被泄露，所以要进行加密处理 )
 
   // 创建用户
   try {
+    console.log('1111111 :>> ', 1111111);
     const newUser = await createUserByPhoneNumber({
       userName: phoneNumber,
       password,
       phoneNumber,
       nickName: randomName(),
-      lastLoginTime: Date.now(),
+      latestLoginTime: Date.now(),
+      gender: 0,
+      city: 'hangzhou',
+      isFrozen: false,
+      picture: '',
     });
+    console.log('newUser :>> ', newUser);
     // 创建成功 - 返回加密后的 token 信息
     return new SuccessModel({
       token: jwtSign(newUser),

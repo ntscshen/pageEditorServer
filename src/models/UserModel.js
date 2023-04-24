@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
+const sequelize = require('../db/seq');
 // 1. 创建 User 模型 ( 表 ) 数据表的名字是 users
 
-const User = seq.define('user', {
-  username: {
+const User = sequelize.define('user', {
+  userName: {
     type: Sequelize.STRING,
     allowNull: false,
     unique: 'username', // 不要用 unique: true, https://www.chaoswork.cn/1064.html
@@ -37,7 +38,7 @@ const User = seq.define('user', {
     type: Sequelize.STRING,
     comment: '城市',
   },
-  latestLoginAt: {
+  latestLoginTime: {
     type: Sequelize.DATE,
     defaultValue: null,
     comment: '最后登录时间',

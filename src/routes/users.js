@@ -102,6 +102,7 @@ router.get('/getUserInfo', loginCheck, async (ctx, next) => {
 
 // 修改用户信息
 router.patch('/updateUserInfo', loginCheck, generateValidator(getUserInfoSchema), async (ctx, next) => {
+  // 通过 loginCheck 之后， userInfo会被挂在到 ctx 上
   const res = await updateUserInfoController(ctx.userInfo, ctx.request.body);
   ctx.body = res;
 });

@@ -1,5 +1,7 @@
 const { UPDATE_USER_INFO_FAIL, UPDATE_USER_INFO_DB_FAIL } = require('../../resModel/failInfo/users');
 const { updateUserInfo } = require('../../service/users');
+const { ErrorModel, SuccessModel } = require('../../resModel');
+const { jwtSign } = require('../../utils/jwt');
 
 // 修改用户信息
 const updateUserInfoController = async (curUserInfo, data = {}) => {
@@ -18,7 +20,7 @@ const updateUserInfoController = async (curUserInfo, data = {}) => {
   if (res) {
     const newUserInfo = Object.assign({}, curUserInfo, data);
     return new SuccessModel({
-      token: jwtSign(newUserInfo),
+      token: jwtSign(newUserInfo, false),
     });
   }
   // 修改失败
