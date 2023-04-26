@@ -24,6 +24,7 @@ function generateValidator(schema) {
       };
       return;
     }
+    console.log('Validator The test was successful >> (next next next)');
     await next();
   };
 }
