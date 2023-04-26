@@ -11,10 +11,12 @@ class BaseModel {
 }
 // 执行失败的数据模型
 class ErrorModel extends BaseModel {
-  constructor({ errno = -1, message = '', data }) {
+  constructor({ errno = -1, message = '', data }, addMessage) {
     super({
       errno,
-      message,
+      message: addMessage
+      ? `${message} - ${addMessage}` // 追加信息
+      : message,
       data,
     });
   }
