@@ -25,6 +25,7 @@ const loginCheck = async (ctx, next) => {
 
   if (flag) {
     // 继续下一个
+    console.log('loginCheck The test was successful >> (next next next)');
     await next();
   }
 };
