@@ -1,6 +1,11 @@
 // 错误信息配置
 module.exports = {
-  // 登录校验失败
+  // 作品不存在
+  WORK_NOT_EXIST: {
+    errno: 13000,
+    message: '作品不存在',
+  },
+  // 创建作品失败
   CREATE_WORKS_FAIL: {
     errno: 13001,
     message: '创建作品失败 db error',
@@ -24,5 +29,10 @@ module.exports = {
   UPDATE_WORKS_DB_ERROR_FAIL: {
     errno: 13005,
     message: '修改作品失败 db error',
+  },
+  // 强制下线
+  FORCE_OFFLINE: {
+    errno: 13006,
+    message: '作品已被强制下线',
   },
 };

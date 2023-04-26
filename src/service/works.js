@@ -44,10 +44,9 @@ async function createWorkService(data = {}, content = {}) {
  * @returns {object} 查询结果
  * */
 async function findOneWorkService(whereOpt) {
+  console.log('whereOpt :>> ', whereOpt);
   Object.keys(whereOpt).length === 0 && null; // 无查询条件
   // 查询作品信息 mysql
-  console.log('查询作品信息 mysql :>> ', '查询作品信息 mysql');
-  console.log('whereOpt :>> ', whereOpt);
   const result = await WorkModel.findOne({
     where: whereOpt,
     include: [
@@ -76,6 +75,16 @@ async function findOneWorkService(whereOpt) {
   };
 }
 /**
+ * 1. 容错处理
+ * 2. 判断要更新的数据是否存在
+ * 3. 更新的数据内容
+ * 4. 更新 content - mongodb
+ * 5. 走到这一步 mongodb数据更新成功 - 删除不需要更新的数据
+ * 6. 更新作品信息 - mysql
+ * 7. 返回更新结果
+ * @param {object} whereOpt 查询条件
+ * @param {object} data 更新的数据
+ * @returns {object} 更新结果
  * */
 async function updateWorksService(whereOpt = {}, data = {}) {
   // 容错处理
@@ -120,7 +129,7 @@ async function updateWorksService(whereOpt = {}, data = {}) {
     where: whereOpt,
   });
   // update方法返回一个数组，数组中的第一个元素表示被更新的行数, 如果result[0]不等于0，说明有行数据被更新
-  return result[0] !== 0
+  return result[0] !== 0;
 }
 
 module.exports = {

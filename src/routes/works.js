@@ -2,7 +2,7 @@ const router = require('koa-router')();
 const { worksSchema } = require('../validator/works');
 
 // controller
-const { createWorks } = require('../controller/works/createWorks');
+const { createWorks, copyWorks } = require('../controller/works/createWorks');
 const { findOneWork } = require('../controller/works/findWorks');
 const { updateWorks } = require('../controller/works/updateWorks');
 
@@ -34,9 +34,16 @@ router.get('/:id', loginCheck, async ctx => {
 router.patch('/:id', loginCheck, async ctx => {
   const { id } = ctx.params;
   const { userName } = ctx.userInfo;
-  const result = await updateWorks(id, userName, ctx.request.body);
+  const result = await updateWorks(id, userName);
+  ctx.body = result;
+});
+
+// 复制作品
+router.post('/copy/:id', loginCheck, async ctx => {
+  const { id } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await copyWorks(id, userName);
   ctx.body = result;
 });
 
 module.exports = router;
-
