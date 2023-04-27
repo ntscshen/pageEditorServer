@@ -1,6 +1,7 @@
 const { SuccessModel, ErrorModel } = require('../../resModel');
-const { QUERY_WORK_FAIL } = require('../../resModel/failInfo/works');
-const { findOneWorkService } = require('../../service/works');
+const { QUERY_WORK_FAIL, QUERY_WORK_DB_ERROR_FAIL } = require('../../resModel/failInfo/works');
+const { findOneWorkService, findMyWorksService } = require('../../service/works');
+
 /**
  * 查询单个作品
  * @param {string} id id
@@ -29,4 +30,37 @@ async function findOneWork(id, author) {
   // 查询成功
   return new SuccessModel(result);
 }
-module.exports = { findOneWork };
+
+// 获取自己的作品列表或模板列表
+async function findMyWorks(author, queryInfo, pageInfo) {
+  console.log('queryInfo :>> ', queryInfo);
+  const { id, uuid, title, status, isTemplate } = queryInfo;
+  let { pageIndex, pageSize } = pageInfo;
+  // 容错处理( 保证不为空，并且符合规范 )
+  pageIndex = parseInt(pageIndex, 10) || 0;
+  pageSize = parseInt(pageSize, 10) || 10;
+  // 查询数据库
+  let result;
+  try {
+    result = await findMyWorksService(
+      {
+        id,
+        uuid,
+        title,
+        status,
+        isTemplate: isTemplate === '1' ? true : false,
+        author,
+      },
+      {
+        pageIndex,
+        pageSize,
+      },
+    );
+  } catch (error) {
+    console.error('查询自己的作品失败', error);
+    return new ErrorModel(QUERY_WORK_DB_ERROR_FAIL, '获取自己的作品列表或模板列表 失败');
+  }
+  return new SuccessModel(result);
+}
+
+module.exports = { findOneWork, findMyWorks };

@@ -3,8 +3,10 @@ const { worksSchema } = require('../validator/works');
 
 // controller
 const { createWorks, copyWorks } = require('../controller/works/createWorks');
-const { findOneWork } = require('../controller/works/findWorks');
+const { findOneWork, findMyWorks } = require('../controller/works/findWorks');
 const { updateWorks } = require('../controller/works/updateWorks');
+const { deleteWorks, recoverWorks } = require('../controller/works/deleteWorks');
+const { receiverWorks } = require('../controller/works/receiverWorks');
 
 // 中间件
 const { loginCheck } = require('../middlewares/loginCheck'); // 登录校验
@@ -34,7 +36,7 @@ router.get('/:id', loginCheck, async ctx => {
 router.patch('/:id', loginCheck, async ctx => {
   const { id } = ctx.params;
   const { userName } = ctx.userInfo;
-  const result = await updateWorks(id, userName);
+  const result = await updateWorks(id, userName, ctx.request.body);
   ctx.body = result;
 });
 
@@ -43,6 +45,41 @@ router.post('/copy/:id', loginCheck, async ctx => {
   const { id } = ctx.params;
   const { userName } = ctx.userInfo;
   const result = await copyWorks(id, userName);
+  ctx.body = result;
+});
+
+// 删除作品
+router.delete('/:id', loginCheck, async ctx => {
+  const { id } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await deleteWorks(id, userName);
+  ctx.body = result;
+});
+
+// 恢复删除作品
+router.patch('/recover/:id', loginCheck, async ctx => {
+  const { id } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await recoverWorks(id, userName, true);
+  ctx.body = result;
+});
+
+// 转赠作品
+router.post('/receiver/:id/:receiver', loginCheck, async ctx => {
+  const { id, receiver } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await receiverWorks(id, userName, receiver);
+  ctx.body = result;
+});
+
+// 获取自己的作品列表或模板列表
+router.get('/', loginCheck, async ctx => {
+  const { userName } = ctx.userInfo;
+  const { id, uuid, author, title, status, isTemplate = '0', pageIndex, pageSize } = ctx.query;
+  console.log('ctx.userInfo :>> ', ctx.userInfo);
+  console.log('ctx.query :>> ', ctx.query);
+
+  const result = await findMyWorks(userName, { id, uuid, title, status, isTemplate }, { pageIndex, pageSize });
   ctx.body = result;
 });
 

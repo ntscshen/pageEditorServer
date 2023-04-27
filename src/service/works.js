@@ -3,6 +3,8 @@ const { Work } = require('../models/WorkContentModel');
 const WorkModel = require('../models/WorkModel');
 const UserModel = require('../models/UserModel');
 const sequelize = require('../db/seq');
+const { Op } = require('sequelize');
+const _ = require('lodash');
 
 // 创建作品
 async function createWorkService(data = {}, content = {}) {
@@ -44,7 +46,6 @@ async function createWorkService(data = {}, content = {}) {
  * @returns {object} 查询结果
  * */
 async function findOneWorkService(whereOpt) {
-  console.log('whereOpt :>> ', whereOpt);
   Object.keys(whereOpt).length === 0 && null; // 无查询条件
   // 查询作品信息 mysql
   const result = await WorkModel.findOne({
@@ -63,7 +64,9 @@ async function findOneWorkService(whereOpt) {
   }
   // 正确的查询结果
   const correctWork = result.dataValues;
-  // console.log('correctWork :>> ', correctWork);
+
+  console.log('mysql correctWork :>> ', correctWork);
+
   // 查询作品内容 mongodb
   const { contentId } = correctWork;
   await sequelize.sync();
@@ -75,6 +78,7 @@ async function findOneWorkService(whereOpt) {
   };
 }
 /**
+ * 查询作品列表
  * 1. 容错处理
  * 2. 判断要更新的数据是否存在
  * 3. 更新的数据内容
@@ -132,8 +136,109 @@ async function updateWorksService(whereOpt = {}, data = {}) {
   return result[0] !== 0;
 }
 
+// findMyWorksService 查询我的作品列表
+async function findMyWorksService(whereOpt = {}, pageOpt = {}) {
+  console.log('whereOpt :>> ', whereOpt);
+  // 拼接查询条件
+  let newWheres = {};
+  const { title, status, isTemplate } = whereOpt;
+  // 1. 处理模糊查询
+  if (title) {
+    newWheres = {
+      ...newWheres,
+      // title
+      title: {
+        [Op.like]: `%${title}%`,
+      },
+    };
+    delete whereOpt.title;
+  }
+  // 2. 处理Boolean类型的查询
+  if (isTemplate) {
+    newWheres = {
+      ...newWheres,
+      isTemplate: !!isTemplate,
+    };
+    delete whereOpt.isTemplate;
+  }
+  // 3. 处理status
+  if (status) {
+    const newStatus = parseInt(status, 10);
+    if (_.isNaN(newStatus)) {
+      newWheres = {
+        ...newWheres,
+        status: {
+          [Op.ne]: 0,
+        },
+      };
+    } else {
+      newWheres.status = newStatus;
+    }
+    delete whereOpt.status;
+  }
+  // 4. 处理其他查询条件
+  _.forEach(whereOpt, (val, key) => {
+    if (val == null) return;
+    newWheres[key] = val;
+  });
+
+  console.log('newWheres :>> ', newWheres);
+  console.log('pageOpt :>> ', pageOpt);
+
+  // 拼接分页条件
+  let { pageSize, pageIndex } = pageOpt;
+  pageIndex = parseInt(pageIndex, 10) || 0; // 页码
+  pageSize = parseInt(pageSize, 10) || 10; // 每页条数
+  const newPageOpt = {
+    limit: pageSize,
+    offset: pageIndex * pageSize,
+    // order: [
+    //   ['orderIndex', 'desc'], // 倒序
+    //   ['id', 'desc'], // 倒序。多个排序，按先后顺序确定优先级
+    // ],
+  };
+
+  // findAndCountAll 是 Sequelize 提供的一个查询方法，用于查询符合条件的数据总数和数据列表
+
+  /**
+  * where: 查询条件
+  * attributes: 查询的字段，可以是一个数组或字符串，表示要查询的字段列表
+  * include: 包含关联模型，可以用来进行联表查询
+  * limit: 查询的数据条数
+  * offset: 跳过的数据条数
+  * order: 排序规则
+  *
+  * */
+
+  let result;
+  try {
+    result = await WorkModel.findAndCountAll({
+      ...newPageOpt,
+      where: newWheres,
+      include: [
+        // 关联 User
+        {
+          model: UserModel,
+          attributes: ['userName', 'nickName', 'gender', 'picture'],
+        },
+      ],
+    });
+  } catch (error) {
+    console.log('error :>> ', error);
+  }
+  console.log('result22222 :>> ', result);
+  // findAndCountAll 方法返回一个包含两个属性的对象，分别是 rows 和 count，分别表示符合条件的数据列表和总条数。
+  const list = result.rows.map(row => row.dataValues);
+
+  return {
+    count: result.count,
+    list,
+  };
+}
+
 module.exports = {
   createWorkService,
   findOneWorkService,
   updateWorksService,
+  findMyWorksService,
 };
