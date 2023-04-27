@@ -35,4 +35,24 @@ module.exports = {
     errno: 13006,
     message: '作品已被强制下线',
   },
+  // 删除/恢复作品失败
+  DELETE_WORKS_FAIL: {
+    errno: 13007,
+    message: '删除作品失败',
+  },
+  // 删除/恢复作品失败 db error
+  DELETE_WORKS_DB_ERROR_FAIL: {
+    errno: 13008,
+    message: '删除作品失败 db error',
+  },
+  // 转赠作品失败
+  GIVE_WORKS_FAIL: {
+    errno: 13009,
+    message: '转赠作品失败',
+  },
+  // 转赠作品失败 db error
+  GIVE_WORKS_DB_ERROR_FAIL: {
+    errno: 13010,
+    message: '转赠作品失败 db error',
+  },
 };
