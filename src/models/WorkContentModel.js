@@ -7,6 +7,9 @@ const workSchema = new mongoose.Schema({
   setting: Object, // 配置信息，如微信分享配置
 });
 
+// 未发布的内容
 const Work = mongoose.model('Work', workSchema);
+// 发布的内容
+const WorkPublishWorkModel = mongoose.model('WorkPublishWork', workSchema);
 
-module.exports = { Work };
+module.exports = { Work, WorkPublishWorkModel };
