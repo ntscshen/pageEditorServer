@@ -55,4 +55,19 @@ module.exports = {
     errno: 13010,
     message: '转赠作品失败 db error',
   },
+  // 发布作品失败
+  PUBLISH_WORKS_FAIL: {
+    errno: 13011,
+    message: '发布作品失败',
+  },
+  // 发布作品失败 db error
+  PUBLISH_WORKS_DB_ERROR_FAIL: {
+    errno: 13012,
+    message: '发布作品失败 db error',
+  },
+  // 强制下线
+  FORCE_OFFLINE_FAIL: {
+    errno: 13013,
+    message: '操作失败，该作品被管理员强制下线，请联系管理员',
+  },
 };
