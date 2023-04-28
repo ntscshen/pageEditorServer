@@ -20,7 +20,9 @@ if (isProd) {
     idle: 10000, // 如果一个线程 10 秒钟内没有被使用过的话，那么就释放线程
   };
 }
-
+console.log('database, user, password, config :>> ', database, user, password, config);
+// database, user, password, config :>>
+// users_db root aB123456 { host: '127.0.0.1', port: 3306, dialect: 'mysql' }
 const sequelize = new Sequelize(database, user, password, config);
 
 module.exports = sequelize;

@@ -5,6 +5,7 @@ const UserModel = require('../models/UserModel');
 const sequelize = require('../db/seq');
 const { Op } = require('sequelize');
 const _ = require('lodash');
+const { WorkPublishWorkModel } = require('../models/WorkContentModel');
 
 // 创建作品
 async function createWorkService(data = {}, content = {}) {
@@ -57,6 +58,9 @@ async function findOneWorkService(whereOpt) {
       },
     ],
   });
+
+  console.log('findOneWorkService :>> ', whereOpt);
+  console.log('findOneWorkService2 :>> ', result);
   if (result === null) {
     // 也可能是null，表示查询未返回任何结果
     console.error('no result found');
@@ -78,7 +82,7 @@ async function findOneWorkService(whereOpt) {
   };
 }
 /**
- * 查询作品列表
+ * 更新作品
  * 1. 容错处理
  * 2. 判断要更新的数据是否存在
  * 3. 更新的数据内容
@@ -236,9 +240,45 @@ async function findMyWorksService(whereOpt = {}, pageOpt = {}) {
   };
 }
 
+/**
+ * 更新发布内容
+ * 1. 判断是否之前发布过
+ * 2. 之前发布过，更新发布内容
+ * 3. 之前尚未发布过，创建发布内容
+ * @param {string} publishContentId 之前发布过的内容id
+ * @param {object} content 要发布的内容
+ * @returns {string} 返回发布内容的id
+ * */
+async function updatePublishService(publishContentId, content = {}) {
+  console.log('updatePublishService :>> ', 'updatePublishService');
+  // 容错处理
+  if (!content) return null;
+  const { components = [], props = {}, setting = {} } = content;
+
+  // 之前发布过的
+  if (publishContentId) {
+    await WorkPublishWorkModel.findByIdAndUpdate(publishContentId, {
+      components,
+      props,
+      setting,
+    });
+    return publishContentId.toString();
+  }
+
+  // 之前尚未发布过
+  const newPublishWork = await WorkPublishWorkModel.create({
+    components,
+    props,
+    setting,
+  });
+  console.log('newPublishWork :>> ', newPublishWork);
+  return newPublishWork._id.toString();
+}
+
 module.exports = {
   createWorkService,
   findOneWorkService,
   updateWorksService,
   findMyWorksService,
+  updatePublishService,
 };

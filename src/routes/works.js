@@ -7,6 +7,7 @@ const { findOneWork, findMyWorks } = require('../controller/works/findWorks');
 const { updateWorks } = require('../controller/works/updateWorks');
 const { deleteWorks, recoverWorks } = require('../controller/works/deleteWorks');
 const { receiverWorks } = require('../controller/works/receiverWorks');
+const { publishWorks } = require('../controller/works/publishWorks');
 
 // 中间件
 const { loginCheck } = require('../middlewares/loginCheck'); // 登录校验
@@ -80,6 +81,22 @@ router.get('/', loginCheck, async ctx => {
   console.log('ctx.query :>> ', ctx.query);
 
   const result = await findMyWorks(userName, { id, uuid, title, status, isTemplate }, { pageIndex, pageSize });
+  ctx.body = result;
+});
+
+// 发布作品
+router.post('/publish/:id', loginCheck, async ctx => {
+  const { id } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await publishWorks(id, userName);
+  ctx.body = result;
+});
+
+// 发布模板
+router.post('/publishTemplate/:id', loginCheck, async ctx => {
+  const { id } = ctx.params;
+  const { userName } = ctx.userInfo;
+  const result = await publishWorks(id, userName, true);
   ctx.body = result;
 });
 
