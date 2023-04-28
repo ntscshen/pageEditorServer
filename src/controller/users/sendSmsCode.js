@@ -1,6 +1,6 @@
 const { setSmsCodeToCache } = require('../../cache/smsCode');
 const { ErrorModel, SuccessModel } = require('../../resModel');
-const { SEND_SMS_CODE_FREQUENCY } = require('../../resModel/failInfo/users');
+const { SEND_SMS_CODE_FREQUENCY, SEND_SMS_CODE_FAIL } = require('../../resModel/failInfo/users');
 const { isDev, isProd, isTest } = require('../../utils/env');
 const { createSmsCode } = require('../../utils/utils');
 const { sendSmsCodeMsg } = require('../../vendor/sendMsg');
@@ -28,7 +28,7 @@ const sendSmsCode = async phoneNumber => {
   } else {
     try {
       // 发送短信验证码( 调用短信服务商的接口 )
-      const result = await sendSmsCodeMsg(phoneNumber, smsCode);
+      await sendSmsCodeMsg(phoneNumber, smsCode);
       isSendSuccess = true;
     } catch (error) {
       isSendSuccess = false;
@@ -45,7 +45,7 @@ const sendSmsCode = async phoneNumber => {
 
   // 4. 最终的返回结果( 本地开发环境返回验证码 线上环境返回 null )
   const finalSmsCode = isProd ? null : { code: smsCode };
-  return new SuccessModel(finalSmsCode);
+  return new SuccessModel({ message: '短信发送成功' });
 };
 
 module.exports = sendSmsCode;
