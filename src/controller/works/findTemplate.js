@@ -9,7 +9,10 @@ function hidePhoneNumber(phoneNumber) {
   return newPhoneNumber.replace(/^(\d{3})\d{4}(\d+)/, '$1****$2');
 }
 
-// 格式化模板
+/**
+ * 格式化模板
+ * @param {object} template 模板
+ * */
 function formatTemplate(template = {}) {
   if (Array.isArray(template)) {
     return template.map(t => formatTemplate(t));
@@ -29,7 +32,17 @@ function formatTemplate(template = {}) {
   return newTemplate;
 }
 
-// 查询公共模板
+/**
+ * 查询公共模板
+ * @param {object} queryInfo 查询条件
+ * @param {number} queryInfo.id 作品id
+ * @param {string} queryInfo.uuid 作品uuid
+ * @param {string} queryInfo.title 作品标题
+ * @param {object} pageInfo 分页信息
+ * @param {number} pageInfo.pageIndex 页码
+ * @param {number} pageInfo.pageSize 每页条数
+ * @returns {object} 查询结果
+ * */
 async function findPublicTemplates(queryInfo, pageInfo) {
   const { id, uuid, title } = queryInfo;
   let { pageIndex, pageSize } = pageInfo;
@@ -62,7 +75,11 @@ async function findPublicTemplates(queryInfo, pageInfo) {
   return new SuccessModel(result);
 }
 
-// 查询单个模板
+/**
+ * 查询单个模板
+ * @param {number} id 作品id
+ * @returns {object} 查询结果
+ * */
 async function findOneTemplate(id) {
   if (!id) return new ErrorModel(QUERY_WORK_DB_ERROR_FAIL, 'id 不能为空');
   let result;

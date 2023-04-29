@@ -1,3 +1,8 @@
+// AKSK 配置
+const AKSKConfig = {
+  accessKeyId: 'xxxx',
+  accessKeySecret: 'yyyy',
+};
 module.exports = {
   // mysql 配置
   mysqlConfig: {
@@ -21,4 +26,18 @@ module.exports = {
   corsOrigin: '*',
   // jwt 过期时间
   jwtExpire: 60 * 60 * 24 * 1, // 1天
+  // sms 配置
+  smsConfig: {
+    SignName: 'lowCode', //短信签名名称
+    TemplateCode: 'SMS_460725207', //短信模板CODE
+  },
+  AKSKConfig,
+  // OSS 配置
+  OSSConfig: {
+    // yourRegion填写Bucket所在地域。以华东1（杭州）为例，Region填写为oss-cn-hangzhou。
+    region: 'oss-cn-hangzhou',
+    // 填写Bucket名称。
+    bucket: 'low-code-bucket',
+    ...AKSKConfig,
+  },
 };

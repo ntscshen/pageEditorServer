@@ -3,7 +3,12 @@ const ajv = new Ajv({
   allErrors: true, // 输出所有的错误
 });
 
-// 生成校验函数
+/**
+ * 校验器
+ * @param {object} schema 校验规则
+ * @param {object} data 校验数据
+ * @returns {object} 校验结果
+ * */
 function validator(schema, data = {}) {
   const valid = ajv.validate(schema, data);
   if (!valid) {

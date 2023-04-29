@@ -2,7 +2,11 @@ const { SuccessModel, ErrorModel } = require('../../resModel');
 const { UPDATE_WORKS_FAIL, UPDATE_WORKS_DB_ERROR_FAIL } = require('../../resModel/failInfo/works');
 const { updateWorksService } = require('../../service/works');
 /**
- *
+ * 修改作品
+ * @param {number} id 作品id
+ * @param {string} author 作品作者
+ * @param {object} data 作品数据
+ * @returns {object} 修改结果
  * */
 async function updateWorks(id, author, data = {}) {
   console.log('id :>> ', id);

@@ -6,7 +6,11 @@ const { createSmsCode } = require('../../utils/utils');
 const { sendSmsCodeMsg } = require('../../vendor/sendMsg');
 const { getSmsCodeFromCache } = require('../../cache/smsCode');
 
-// 发送短信验证码
+/**
+ * 发送短信验证码
+ * @param {string} phoneNumber 手机号
+ * @returns {object} 发送结果
+ * */
 const sendSmsCode = async phoneNumber => {
   // 1. 从缓存中获取验证码 查看是否过期
   const smsCodeFromCache = (await getSmsCodeFromCache(phoneNumber)) || '';
