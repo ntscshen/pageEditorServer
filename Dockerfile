@@ -10,7 +10,7 @@ RUN npm install
 RUN npm install pm2 -g
 
 # 启动
-CMD echo $SERVER_NAME && echo $AUTHOR_NAME
+CMD echo $SERVER_NAME && echo $AUTHOR_NAME && npm run prd-dev && npx npm2 log
 
 # 环境变量
 ENV SERVER_NAME='pageEditorServer'
