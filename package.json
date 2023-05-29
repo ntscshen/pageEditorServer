@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nodemon bin/www",
     "dev": "cross-env NODE_ENV=development nodemon bin/www",
+    "prd-dev": "cross-env NODE_ENV=prd_dev nodemon bin/www",
     "prd": "pm2 start bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

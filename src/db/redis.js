@@ -1,4 +1,4 @@
-// const Redis = require('redis');
+const Redis = require('redis');
 
 const { redisConfig } = require('../config/dev');
 const Redis = require('ioredis');

@@ -6,7 +6,7 @@ const { loginCheck } = require('../middlewares/loginCheck');
 const { SuccessModel } = require('../resModel');
 const { updateUserInfoController } = require('../controller/users/updateUserInfo');
 const connection = require('../db/mysql2');
-// const redisClient = require('../db/redis');
+const redisClient = require('../db/redis');
 // const mongoose = require('../db/mongoose');
 const dayjs = require('dayjs');
 
@@ -24,8 +24,8 @@ router.get('/db-check', async (ctx, next) => {
   const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
 
   // 测试 redis 连接
-  // redisClient.set('now', 'redis测试成功');
-  // const redisExecultNow = await redisClient.get('now');
+  redisClient.set('now', 'redis测试成功');
+  const redisExecultNow = await redisClient.get('now');
 
   // 测试 mongodb 连接
   let mongodbResult = null;
@@ -59,7 +59,7 @@ router.get('/db-check', async (ctx, next) => {
         mysqlExecultNow,
         currentDate,
       },
-      // redisConnection: redisExecultNow,
+      redisConnection: redisExecultNow,
       // mongodbConnection: mongodbResult,
     },
   };

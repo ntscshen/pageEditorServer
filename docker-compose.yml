@@ -1,0 +1,21 @@
+version: '3'
+services:
+  # 最终会以docker容器的形式展示出来
+  # 就是在配置docker容器
+  editor-server:
+    build:
+      context: . # 当前目录
+      dockerfile: Dockerfile # dockerfile文件
+    image: editor-server # 镜像名称
+    container_name: editor-server # 容器名称
+    ports:
+      - "8083:3000" # 端口映射 本地端口:容器端口
+  edit-redis:
+    # service name
+    image: redis # 引用的官网 redis image
+    container_name: editor-redis # 容器名称
+    ports:
+      - "6373:6379"
+    environment:
+      # 环境变量
+      - TZ=Asia/Shanghai
