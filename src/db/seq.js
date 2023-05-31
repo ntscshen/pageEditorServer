@@ -1,7 +1,7 @@
 // 配置 Sequelize 连接数据库
 
 const Sequelize = require('sequelize');
-const { mysqlConfig } = require('../config/dev');
+const { mysqlConfig } = require('../config');
 const { isProd } = require('../utils/env');
 
 const { host, port, user, password, database } = mysqlConfig;
