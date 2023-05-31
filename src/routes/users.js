@@ -44,9 +44,9 @@ router.get('/db-check', async (ctx, next) => {
 
     // const User = mongoose.model('User', userSchema);
 
-    await User.findOne().then(result => {
-      console.log('result :>> ', result);
-    });
+    // await User.findOne().then(result => {
+    //   console.log('result :>> ', result);
+    // });
   } catch (error) {
     console.log('error :>> ', error);
     mongodbResult = false;
