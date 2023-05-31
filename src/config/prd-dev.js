@@ -6,4 +6,6 @@ Object.assign(devConf.redisConfig, {
   host: 'editor-redis',
 });
 
+console.log('redis 连接配置 devConf :>> ', devConf);
+
 module.exports = devConf;

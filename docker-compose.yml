@@ -10,7 +10,7 @@ services:
     container_name: editor-server # 容器名称
     ports:
       - "8083:3000" # 端口映射 本地端口:容器端口
-  edit-redis:
+  editor-redis:
     # service name
     image: redis # 引用的官网 redis image
     container_name: editor-redis # 容器名称
