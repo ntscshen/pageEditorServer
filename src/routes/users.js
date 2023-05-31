@@ -5,7 +5,7 @@ const { phoneNumberSchema, phoneNumberAndSmsCodeSchema, getUserInfoSchema } = re
 const { loginCheck } = require('../middlewares/loginCheck');
 const { SuccessModel } = require('../resModel');
 const { updateUserInfoController } = require('../controller/users/updateUserInfo');
-const connection = require('../db/mysql2');
+// const connection = require('../db/mysql2');
 const redisClient = require('../db/redis');
 // const mongoose = require('../db/mongoose');
 const dayjs = require('dayjs');
@@ -19,9 +19,9 @@ router.prefix('/api/users');
 
 router.get('/db-check', async (ctx, next) => {
   // 测试 mysql 连接
-  const mysqlExecult = await connection.execute('SELECT NOW();');
-  const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
-  const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
+  // const mysqlExecult = await connection.execute('SELECT NOW();');
+  // const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
+  // const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
 
   // 测试 redis 连接
   redisClient.set('now', 'redis测试成功');
@@ -55,10 +55,10 @@ router.get('/db-check', async (ctx, next) => {
   ctx.body = {
     errno: 0,
     data: {
-      mysqlConnection: {
-        mysqlExecultNow,
-        currentDate,
-      },
+      // mysqlConnection: {
+      //   mysqlExecultNow,
+      //   currentDate,
+      // },
       redisConnection: redisExecultNow,
       // mongodbConnection: mongodbResult,
     },
