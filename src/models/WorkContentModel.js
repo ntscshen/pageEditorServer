@@ -13,4 +13,6 @@
 // const WorkPublishWorkModel = mongoose.model('WorkPublishWork', workSchema);
 
 // module.exports = { Work, WorkPublishWorkModel };
+const Work = () => {}
+const WorkPublishWorkModel = () => {}
 module.exports = { Work, WorkPublishWorkModel };
