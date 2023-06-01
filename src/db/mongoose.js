@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 // const Schema = mongoose.Schema;
 const { mongodbConfig } = require('../config/dev');
 
+console.log('`${mongodbConfig.url}/${mongodbConfig.dbName}` :>> ', `${mongodbConfig.url}/${mongodbConfig.dbName}`);
+
 mongoose.connect(`${mongodbConfig.url}/${mongodbConfig.dbName}`).then(() => console.log('Connected to MongoDB...')).catch(err => console.error('Could not connect to MongoDB...', err));
 
 // 连接对象
