@@ -20,4 +20,36 @@ services:
       # 环境变量
       - TZ=Asia/Shanghai
     command: redis-cli ping # 测试 redis 是否启动成功
-
+  editor-mongo:
+    image: mongo # 引用的官网 mongo image
+    container_name: editor-mongo # 容器名称
+    restart: always # 重启策略
+    ports:
+      - "27013:27017" # 端口映射 本地端口:容器端口
+      # 宿主机可以通过 127.0.0.1:27013 访问容器内的 27017 端口 (连接数据库)
+    environment:
+      # 环境变量
+      # 定义数据库经名称
+      - MONGO_INITDB_DATABASE=editor_server_mongo_db
+      - TZ=Asia/Shanghai
+    volumes:
+      # 挂载数据卷
+      - .docker-volumes/mongo-data:/data/db # 宿主机目录:容器目录
+  editor-mysql:
+    image: mysql # 引用的官网 mysql image
+    container_name: editor-mysql # 容器名称
+    restart: always # 重启策略
+    privileged: true # 特权模式 (可以访问宿主机的硬件) (不建议使用) (不安全)
+    command: --default-authentication-plugin=mysql_native_password # 远程访问 mysql 需要的配置， 指定密码加密方式 (不然会报错)
+    ports:
+      - "3303:3306" # 端口映射 本地端口:容器端口
+    environment:
+      # 环境变量
+      - MYSQL_DATABASE=editor_server_mysql_db # 定义数据库名称
+      - MYSQL_ROOT_PASSWORD=aB123456 # 定义数据库密码
+      - TZ=Asia/Shanghai # 定义时区
+    volumes:
+      # 挂载数据卷
+      - .docker-volumes/mysql/data:/var/lib/mysql # 宿主机目录:容器目录 (数据)
+      - .docker-volumes/mysql/logs:/var/log/mysql # 宿主机目录:容器目录 (日志)
+      - ./mysql/init:/docker-entrypoint-initdb.d # 宿主机目录:容器目录 (初始化脚本)

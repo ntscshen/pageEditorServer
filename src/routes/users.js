@@ -5,9 +5,9 @@ const { phoneNumberSchema, phoneNumberAndSmsCodeSchema, getUserInfoSchema } = re
 const { loginCheck } = require('../middlewares/loginCheck');
 const { SuccessModel } = require('../resModel');
 const { updateUserInfoController } = require('../controller/users/updateUserInfo');
-// const connection = require('../db/mysql2');
 const redisClient = require('../db/redis');
-// const mongoose = require('../db/mongoose');
+const connection = require('../db/mysql2');
+const mongoose = require('../db/mongoose');
 const dayjs = require('dayjs');
 
 const router = require('koa-router')();
@@ -18,35 +18,47 @@ router.prefix('/api/users');
 // 测试 mysql 连接
 
 router.get('/db-check', async (ctx, next) => {
-  // 测试 mysql 连接
-  // const mysqlExecult = await connection.execute('SELECT NOW();');
-  // const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
-  // const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
-
-  // 测试 redis 连接
+  // 1. 测试 redis 连接
   redisClient.set('now', 'redis测试成功');
   const redisExecultNow = await redisClient.get('now');
 
-  // 测试 mongodb 连接
+  // 2. 测试 mysql 连接
+  const mysqlExecult = await connection.execute('SELECT NOW();');
+  const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
+  const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
+
+  // 3. 测试 mongodb 连接
   let mongodbResult = null;
   try {
+    console.log('mongoose.models.User :>> ', mongoose.models.User);
     mongodbResult = true;
-    // const userSchema = new mongoose.Schema({
-    //   name: String,
-    //   age: Number,
-    //   email: String,
-    //   password: String,
-    //   createdAt: {
-    //     type: Date,
-    //     default: Date.now,
-    //   },
-    // });
+    // 检查模型是否存在
+    if (mongoose.models.User) {
+      console.log('模型存在');
+      // 如果模型已存在，直接使用已编译的模型
+      const User = mongoose.model('User'); // 获取模型 User
+      // 继续使用模型进行操作 - 通过模型查询数据
+      await User.findOne().then(result => {
+        console.log('result :>> ', result);
+      });
+    } else {
+      const userSchema = new mongoose.Schema({
+        name: String,
+        age: Number,
+        email: String,
+        password: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      });
 
-    // const User = mongoose.model('User', userSchema);
+      const User = mongoose.model('User', userSchema);
 
-    // await User.findOne().then(result => {
-    //   console.log('result :>> ', result);
-    // });
+      await User.findOne().then(result => {
+        console.log('result :>> ', result);
+      });
+    }
   } catch (error) {
     console.log('error :>> ', error);
     mongodbResult = false;
@@ -55,12 +67,17 @@ router.get('/db-check', async (ctx, next) => {
   ctx.body = {
     errno: 0,
     data: {
-      // mysqlConnection: {
-      //   mysqlExecultNow,
-      //   currentDate,
-      // },
-      redisConnection: redisExecultNow,
-      // mongodbConnection: mongodbResult,
+      mysqlConnection: {
+        message: (currentDate && 'mysql连接成功') || 'mysql连接失败',
+        mysqlExecultNow,
+        currentDate,
+      },
+      redisConnection: {
+        message: (redisExecultNow && 'redis设置成功') || 'redis设置失败',
+      },
+      mongodbConnection: {
+        message: (mongodbResult && 'mongodb连接成功') || 'mongodb连接失败',
+      },
     },
   };
 });
