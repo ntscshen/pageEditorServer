@@ -19,22 +19,7 @@ services:
     environment:
       # 环境变量
       - TZ=Asia/Shanghai
-    command: redis-cli ping # 测试 redis 是否启动成功
-  editor-mongo:
-    image: mongo # 引用的官网 mongo image
-    container_name: editor-mongo # 容器名称
-    restart: always # 重启策略
-    ports:
-      - "27013:27017" # 端口映射 本地端口:容器端口
-      # 宿主机可以通过 127.0.0.1:27013 访问容器内的 27017 端口 (连接数据库)
-    environment:
-      # 环境变量
-      # 定义数据库经名称
-      - MONGO_INITDB_DATABASE=editor_server_mongo_db
-      - TZ=Asia/Shanghai
-    volumes:
-      # 挂载数据卷
-      - .docker-volumes/mongo-data:/data/db # 宿主机目录:容器目录
+    # command: redis-cli ping # 测试 redis 是否启动成功
   editor-mysql:
     image: mysql # 引用的官网 mysql image
     container_name: editor-mysql # 容器名称
