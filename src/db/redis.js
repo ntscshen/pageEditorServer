@@ -1,4 +1,4 @@
-const { redisConfig } = require('../config/dev');
+const { redisConfig } = require('../config');
 console.log('redisConfig222 :>> ', redisConfig);
 const Redis = require('ioredis');
 const redisClient = new Redis(redisConfig);
