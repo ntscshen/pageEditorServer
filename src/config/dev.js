@@ -15,7 +15,7 @@ module.exports = {
   //mongodb 配置
   mongodbConfig: {
     url: 'mongodb://localhost:27017',
-    dbName: 'myblog',
+    dbName: 'editor_server_mongo_db',
   },
   // redis 配置
   redisConfig: {
