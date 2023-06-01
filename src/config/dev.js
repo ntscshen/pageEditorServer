@@ -10,7 +10,7 @@ module.exports = {
     port: 3306,
     user: 'root',
     password: 'aB123456',
-    database: 'users_db',
+    database: 'editor_server_mysql_db',
   },
   //mongodb 配置
   mongodbConfig: {

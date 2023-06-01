@@ -22,7 +22,7 @@ if (isProd) {
 }
 console.log('database, user, password, config :>> ', database, user, password, config);
 // database, user, password, config :>>
-// users_db root aB123456 { host: '127.0.0.1', port: 3306, dialect: 'mysql' }
+// editor_server_mysql_db root aB123456 { host: '127.0.0.1', port: 3306, dialect: 'mysql' }
 const sequelize = new Sequelize(database, user, password, config);
 
 module.exports = sequelize;
