@@ -7,7 +7,7 @@ const { SuccessModel } = require('../resModel');
 const { updateUserInfoController } = require('../controller/users/updateUserInfo');
 const redisClient = require('../db/redis');
 const connection = require('../db/mysql2');
-// const mongoose = require('../db/mongoose');
+const mongoose = require('../db/mongoose');
 const dayjs = require('dayjs');
 
 const router = require('koa-router')();
@@ -28,41 +28,41 @@ router.get('/db-check', async (ctx, next) => {
   const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
 
   // 3. 测试 mongodb 连接
-  // let mongodbResult = null;
-  // try {
-  //   console.log('mongoose.models.User :>> ', mongoose.models.User);
-  //   mongodbResult = true;
-  //   // 检查模型是否存在
-  //   if (mongoose.models.User) {
-  //     console.log('模型存在');
-  //     // 如果模型已存在，直接使用已编译的模型
-  //     const User = mongoose.model('User'); // 获取模型 User
-  //     // 继续使用模型进行操作 - 通过模型查询数据
-  //     await User.findOne().then(result => {
-  //       console.log('result :>> ', result);
-  //     });
-  //   } else {
-  //     const userSchema = new mongoose.Schema({
-  //       name: String,
-  //       age: Number,
-  //       email: String,
-  //       password: String,
-  //       createdAt: {
-  //         type: Date,
-  //         default: Date.now,
-  //       },
-  //     });
+  let mongodbResult = null;
+  try {
+    console.log('mongoose.models.User :>> ', mongoose.models.User);
+    mongodbResult = true;
+    // 检查模型是否存在
+    if (mongoose.models.User) {
+      console.log('模型存在');
+      // 如果模型已存在，直接使用已编译的模型
+      const User = mongoose.model('User'); // 获取模型 User
+      // 继续使用模型进行操作 - 通过模型查询数据
+      await User.findOne().then(result => {
+        console.log('result :>> ', result);
+      });
+    } else {
+      const userSchema = new mongoose.Schema({
+        name: String,
+        age: Number,
+        email: String,
+        password: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      });
 
-  //     const User = mongoose.model('User', userSchema);
+      const User = mongoose.model('User', userSchema);
 
-  //     await User.findOne().then(result => {
-  //       console.log('result :>> ', result);
-  //     });
-  //   }
-  // } catch (error) {
-  //   console.log('error :>> ', error);
-  //   mongodbResult = false;
-  // }
+      await User.findOne().then(result => {
+        console.log('result :>> ', result);
+      });
+    }
+  } catch (error) {
+    console.log('error :>> ', error);
+    mongodbResult = false;
+  }
 
 
 
@@ -77,9 +77,9 @@ router.get('/db-check', async (ctx, next) => {
       redisConnection: {
         message: (redisExecultNow && 'redis设置成功') || 'redis设置失败',
       },
-      // mongodbConnection: {
-      //   message: (mongodbResult && 'mongodb连接成功') || 'mongodb连接失败',
-      // },
+      mongodbConnection: {
+        message: (mongodbResult && 'mongodb连接成功') || 'mongodb连接失败',
+      },
     },
   };
 });

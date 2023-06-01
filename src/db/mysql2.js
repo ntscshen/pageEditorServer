@@ -1,6 +1,6 @@
 // mysql2 连接测试
 const mysql = require('mysql2/promise');
-const { mysqlConfig } = require('../config/dev');
+const { mysqlConfig } = require('../config');
 const { host, port, user, password, database } = mysqlConfig;
 const connection = mysql.createPool({
   host: host,

@@ -1,7 +1,7 @@
 // 进行数据库的连接
 const mongoose = require('mongoose');
 // const Schema = mongoose.Schema;
-const { mongodbConfig } = require('../config/dev');
+const { mongodbConfig } = require('../config');
 
 console.log('`${mongodbConfig.url}/${mongodbConfig.dbName}` :>> ', `${mongodbConfig.url}/${mongodbConfig.dbName}`);
 
