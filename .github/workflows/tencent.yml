@@ -44,6 +44,11 @@ jobs:
           ssh-keyscan 124.223.78.185 >> ~/.ssh/known_hosts
           cat ~/.ssh/id_rsa
           cat ~/.ssh/known_hosts
+      - name: deploy
+        run: |
+          ssh work@124.223.78.185
+          pwd
+          ls
 
     # # Build
     # - name: Build Docker image
