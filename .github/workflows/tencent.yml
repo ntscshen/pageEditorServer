@@ -13,67 +13,73 @@
 #
 # 3. Change the values for the TKE_IMAGE_URL, TKE_REGION, TKE_CLUSTER_ID and DEPLOYMENT_NAME environment variables (below).
 
-name: Tencent Kubernetes Engine
+name: Tencent Kubernetes Engine # Name of the workflow
 
 on:
   push:
-    branches: [ "main" ]
-
-# Environment variables available to all jobs and steps in this workflow
-env:
-  TKE_IMAGE_URL: ccr.ccs.tencentyun.com/demo/mywebapp
-  TKE_REGION: ap-guangzhou
-  TKE_CLUSTER_ID: cls-mywebapp
-  DEPLOYMENT_NAME: tke-test
-
+    branches: ['dev']
+    push:
+      - '.github/workflows/**'
+      - 'README.md'
+      - 'Dockerfile'
+      - 'deployment.yml'
+      - 'src/**'
+      - 'bin/**'
 permissions:
-  contents: read
+  contents: read # Read all files under the repository
 
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
-    runs-on: ubuntu-latest
-    environment: production
+    runs-on: ubuntu-latest # Set the job to run on the latest version of Ubuntu
+    environment: development # Set the workflow to run in the development environment
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3 # Checkout the repository content to GitHub Actions agent
+      - name: set ssh key # Temporarily set ssh key
+        run: |
+          mkdir -p ~/.ssh/ # 创建 .ssh 文件夹
+          echo "${{ secrets.ID_RSA_TENCENT_CLOUD }}" > ~/.ssh/id_rsa # 将从 github secrets 中获取的私钥写入到 id_rsa 文件中
+          chmod 600 ~/.ssh/id_rsa # 设置私钥权限 600 只有拥有者有读写权限，其他人没有任何权限
+          ssh-keyscan 124.223.78.185 >> ~/.ssh/known_hosts
+          cat ~/.ssh/id_rsa
+          cat ~/.ssh/known_hosts
 
-    - name: Checkout
-      uses: actions/checkout@v3
+    # # Build
+    # - name: Build Docker image
+    #   run: |
+    #     docker build -t ${TKE_IMAGE_URL}:${GITHUB_SHA} .
 
-    # Build
-    - name: Build Docker image
-      run: |
-        docker build -t ${TKE_IMAGE_URL}:${GITHUB_SHA} .
+    # - name: Login TKE Registry
+    #   run: |
+    #     docker login -u ${{ secrets.TENCENT_CLOUD_ACCOUNT_ID }} -p '${{ secrets.TKE_REGISTRY_PASSWORD }}' ${TKE_IMAGE_URL}
 
-    - name: Login TKE Registry
-      run: |
-        docker login -u ${{ secrets.TENCENT_CLOUD_ACCOUNT_ID }} -p '${{ secrets.TKE_REGISTRY_PASSWORD }}' ${TKE_IMAGE_URL}
+    # # Push the Docker image to TKE Registry
+    # - name: Publish
+    #   run: |
+    #     docker push ${TKE_IMAGE_URL}:${GITHUB_SHA}
 
-    # Push the Docker image to TKE Registry
-    - name: Publish
-      run: |
-        docker push ${TKE_IMAGE_URL}:${GITHUB_SHA}
+    # - name: Set up Kustomize
+    #   run: |
+    #     curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+    #     chmod u+x ./kustomize
 
-    - name: Set up Kustomize
-      run: |
-        curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-        chmod u+x ./kustomize
+    # - name: Set up ~/.kube/config for connecting TKE cluster
+    #   uses: TencentCloud/tke-cluster-credential-action@v1
+    #   with:
+    #     secret_id: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
+    #     secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
+    #     tke_region: ${{ env.TKE_REGION }}
+    #     cluster_id: ${{ env.TKE_CLUSTER_ID }}
 
-    - name: Set up ~/.kube/config for connecting TKE cluster
-      uses: TencentCloud/tke-cluster-credential-action@v1
-      with:
-        secret_id: ${{ secrets.TENCENT_CLOUD_SECRET_ID }}
-        secret_key: ${{ secrets.TENCENT_CLOUD_SECRET_KEY }}
-        tke_region: ${{ env.TKE_REGION }}
-        cluster_id: ${{ env.TKE_CLUSTER_ID }}
+    # - name: Switch to TKE context
+    #   run: |
+    #     kubectl config use-context ${TKE_CLUSTER_ID}-context-default
 
-    - name: Switch to TKE context
-      run: |
-        kubectl config use-context ${TKE_CLUSTER_ID}-context-default
-
-    # Deploy the Docker image to the TKE cluster
-    - name: Deploy
-      run: |
-        ./kustomize edit set image ${TKE_IMAGE_URL}:${GITHUB_SHA}
-        ./kustomize build . | kubectl apply -f -
-        kubectl rollout status deployment/${DEPLOYMENT_NAME}
-        kubectl get services -o wide
+    # # Deploy the Docker image to the TKE cluster
+    # - name: Deploy
+    #   run: |
+    #     ./kustomize edit set image ${TKE_IMAGE_URL}:${GITHUB_SHA}
+    #     ./kustomize build . | kubectl apply -f -
+    #     kubectl rollout status deployment/${DEPLOYMENT_NAME}
+    #     kubectl get services -o wide
