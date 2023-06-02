@@ -48,7 +48,13 @@ jobs:
         run: |
           ssh work@124.223.78.185
           pwd
+          pwd
+          pwd
           ls
+      - name: delete ssh key # 删除私钥
+        run: |
+          rm -rf ~/.ssh/id_rsa
+          rm -rf ~/.ssh/known_hosts
 
     # # Build
     # - name: Build Docker image
