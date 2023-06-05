@@ -55,16 +55,20 @@ jobs:
           git status
           git remote -v
 
-          git checkout dev
-          git pull origin dev
 
-          docker-compose down
-          docker-compose build editor-server
-          docker-compose up -d
           pwd
           pwd
           pwd
           ls
+      - name: Change directory
+        run: cd ~/home/work/pageEditorServer
+
+      - name: Start services
+        run: |
+          docker-compose down
+          docker-compose build editor-server
+          docker-compose up -d
+
       - name: delete ssh key # 删除私钥
         run: |
           rm -rf ~/.ssh/id_rsa
