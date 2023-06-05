@@ -41,12 +41,13 @@ jobs:
           mkdir -p ~/.ssh/ # 创建 .ssh 文件夹
           echo "${{ secrets.ID_RSA_TENCENT_CLOUD }}" > ~/.ssh/id_rsa # 将从 github secrets 中获取的私钥写入到 id_rsa 文件中
           chmod 600 ~/.ssh/id_rsa # 设置私钥权限 600 只有拥有者有读写权限，其他人没有任何权限
-          ssh-keyscan 124.223.78.185 >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           cat ~/.ssh/id_rsa
           cat ~/.ssh/known_hosts
       - name: deploy
         run: |
-          ssh work@124.223.78.185
+          ssh work@${{secrets.SERVER_IP}}
+          cd /home/work/
           pwd
           pwd
           pwd

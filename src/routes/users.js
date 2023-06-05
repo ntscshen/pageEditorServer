@@ -43,9 +43,9 @@ router.get('/db-check', async (ctx, next) => {
       // 如果模型已存在，直接使用已编译的模型
       const User = mongoose.model('User'); // 获取模型 User
       // 继续使用模型进行操作 - 通过模型查询数据
-      await User.findOne().then(result => {
-        console.log('result :>> ', result);
-      });
+      // await User.findOne().then(result => {
+      //   console.log('result :>> ', result);
+      // });
     } else {
       const userSchema = new mongoose.Schema({
         name: String,
@@ -72,6 +72,7 @@ router.get('/db-check', async (ctx, next) => {
 
   ctx.body = {
     errno: 0,
+    name: 'db-check',
     data: {
       mysqlConnection: {
         message: (currentDate && 'mysql连接成功') || 'mysql连接失败',
