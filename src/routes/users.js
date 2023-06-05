@@ -19,16 +19,21 @@ router.prefix('/api/users');
 
 router.get('/db-check', async (ctx, next) => {
   // 1. 测试 redis 连接
+  console.time('redis');
   redisClient.set('now', 'redis测试成功');
   const redisExecultNow = await redisClient.get('now');
+  console.timeEnd('redis');
 
   // 2. 测试 mysql 连接
+  console.time('mysql');
   const mysqlExecult = await connection.execute('SELECT NOW();');
   const mysqlExecultNow = mysqlExecult[0][0]['NOW()'];
   const currentDate = dayjs(mysqlExecultNow).format('YYYY-MM-DD HH:mm:ss');
+  console.timeEnd('mysql');
 
   // 3. 测试 mongodb 连接
   let mongodbResult = null;
+  console.time('mongoose.models.User');
   try {
     console.log('mongoose.models.User :>> ', mongoose.models.User);
     mongodbResult = true;
@@ -63,8 +68,7 @@ router.get('/db-check', async (ctx, next) => {
     console.log('error :>> ', error);
     mongodbResult = false;
   }
-
-
+  console.timeEnd('mongoose.models.User');
 
   ctx.body = {
     errno: 0,
