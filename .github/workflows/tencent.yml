@@ -61,7 +61,7 @@ jobs:
           pwd
           ls
       - name: Change directory
-        run: cd ~/home/work/pageEditorServer
+        run: cd /home/work/pageEditorServer
 
       - name: Start services
         run: |
