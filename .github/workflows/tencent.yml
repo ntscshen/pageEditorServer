@@ -58,6 +58,7 @@ jobs:
           git checkout dev
           git pull origin dev
 
+          docker-compose down
           docker-compose build editor-server
           docker-compose up -d
           pwd
