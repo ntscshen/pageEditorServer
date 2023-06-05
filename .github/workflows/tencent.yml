@@ -46,7 +46,7 @@ jobs:
           cat ~/.ssh/known_hosts
       - name: deploy
         run: |
-          ssh work@${{ secrets.SERVER_IP }}
+          ssh -T work@${{ secrets.SERVER_IP }}
           cd /home/work/pageEditorServer
           git checkout dev
           git pull origin dev
