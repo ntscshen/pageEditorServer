@@ -52,8 +52,9 @@ jobs:
           pwd
           pwd
           ls -la
+          git status
+          git remote -v
 
-          cd /home/work/pageEditorServer
           git checkout dev
           git pull origin dev
           dc build editor-server
