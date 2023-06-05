@@ -47,6 +47,12 @@ jobs:
       - name: deploy
         run: |
           ssh -T work@${{ secrets.SERVER_IP }}
+          ls
+          pwd
+          pwd
+          pwd
+          ls -la
+
           cd /home/work/pageEditorServer
           git checkout dev
           git pull origin dev
