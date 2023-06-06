@@ -46,10 +46,16 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
+            pwd
+            pwd
+            pwd
+            ls
+
             cd /home/work/pageEditorServer
             pwd
             git pull
             pwd
+            docker ps -a
             docker-compose down
             pwd
             docker image rm editor-server
