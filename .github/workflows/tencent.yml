@@ -18,7 +18,7 @@ name: Tencent Kubernetes Engine # Name of the workflow
 on:
   push:
     branches: ['dev']
-    push:
+    paths:
       - '.github/workflows/**'
       - 'README.md'
       - 'Dockerfile'
@@ -36,44 +36,63 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3 # Checkout the repository content to GitHub Actions agent
-      - name: set ssh key # Temporarily set ssh key
-        run: |
-          mkdir -p ~/.ssh/ # 创建 .ssh 文件夹
-          echo "${{ secrets.ID_RSA_TENCENT_CLOUD }}" > ~/.ssh/id_rsa # 将从 github secrets 中获取的私钥写入到 id_rsa 文件中
-          chmod 600 ~/.ssh/id_rsa # 设置私钥权限 600 只有拥有者有读写权限，其他人没有任何权限
-          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          cat ~/.ssh/id_rsa
-          cat ~/.ssh/known_hosts
-      - name: deploy
-        run: |
-          ssh -T work@${{ secrets.SERVER_IP }}
-          ls
-          pwd
-          pwd
-          pwd
-          ls -la
-          git status
-          git remote -v
 
+        # ssh work@124.223.78.185
+      - name: Connect to remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            ls
+            pwd
+            cd /home/work/pageEditorServer
+            ls
+            pwd
+            git pull
+            docker-compose down
+            docker-compose build editor-server
+            docker-compose up -d
+            exit
 
-          pwd
-          pwd
-          pwd
-          ls
-      - name: Change directory
-        run: cd /home/runner/work/pageEditorServer/pageEditorServer
+      # - name: set ssh key # Temporarily set ssh key
+      #   run: |
+      #     mkdir -p ~/.ssh/ # 创建 .ssh 文件夹
+      #     echo "${{ secrets.ID_RSA_TENCENT_CLOUD }}" > ~/.ssh/id_rsa # 将从 github secrets 中获取的私钥写入到 id_rsa 文件中
+      #     chmod 600 ~/.ssh/id_rsa # 设置私钥权限 600 只有拥有者有读写权限，其他人没有任何权限
+      #     ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+      #     cat ~/.ssh/id_rsa
+      #     cat ~/.ssh/known_hosts
+      # - name: deploy
+      #   run: |
+      #     ssh -T work@${{ secrets.SERVER_IP }}
+      #     ls
+      #     pwd
+      #     pwd
+      #     pwd
+      #     ls -la
+      #     git status
+      #     git remote -v
 
+      #     pwd
+      #     pwd
+      #     pwd
+      #     ls
+      # - name: Change directory
+      #   run: cd /home/runner/work/pageEditorServer/pageEditorServer
 
-      - name: Start services
-        run: |
-          docker-compose down
-          docker-compose build editor-server
-          docker-compose up -d
+      # - name: Start services
+      #   run: |
+      #     docker-compose down
+      #     docker-compose build editor-server
+      #     docker-compose up -d
 
-      - name: delete ssh key # 删除私钥
-        run: |
-          rm -rf ~/.ssh/id_rsa
-          rm -rf ~/.ssh/known_hosts
+      # - name: delete ssh key # 删除私钥
+      #   run: |
+      #     rm -rf ~/.ssh/id_rsa
+      #     rm -rf ~/.ssh/known_hosts
 
     # # Build
     # - name: Build Docker image
