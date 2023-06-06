@@ -73,7 +73,7 @@ router.get('/db-check', async (ctx, next) => {
   ctx.body = {
     errno: 0,
     name: 'db-check',
-    message: '测试github actions自动部署',
+    message: '测试github actions自动部署 - 测试docker-compose',
     data: {
       mysqlConnection: {
         message: (currentDate && 'mysql连接成功') || 'mysql连接失败',
